@@ -60,7 +60,6 @@ test.describe('unlock-code', () => {
         await payButton.click();
 
         await page.waitForResponse((res) => res.url().includes('/confirm') && res.status() === 200);
-
         // complete step not handler success payment if want to handler will use credit-card OMISE have handler success case and failed case
     })
 
