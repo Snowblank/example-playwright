@@ -1,6 +1,6 @@
 import test, { expect } from "@playwright/test";
 import Konva from "konva";
-
+import { selectSeatAvailable } from "./utils/utils";
 const Url = 'http://localhost:3000';
 const Email = process.env.EMAIL ?? '';
 const Password = process.env.PASSWORD ?? '';
@@ -8,10 +8,6 @@ const Password = process.env.PASSWORD ?? '';
 declare global {
     interface Window {
         Konva: typeof Konva;
-        Playwright: {
-            onGetAvailableSeatInSeatMap: () => any[];
-            onSelecteSeatInSeatMap: (rowIndex: number, colIndex: number) => void;
-        }
     }
 }
 
@@ -54,28 +50,8 @@ test.describe('unlock-code', () => {
 
         await page.waitForTimeout(5000)
 
-        // Step 4.1: Find Seat Available and Select Seat
-        const seatData = await page.evaluate(() => {
-            const stage = window.Konva?.stages?.[0];
-            if (!stage) return { error: 'No stage' };
-
-            const layer = stage.getLayers()?.[0];
-            if (!layer) return { error: 'No layer' };
-
-            return layer;
-        });
-
-        await page.evaluate(() => {
-            const playwrightMock = window.Playwright;
-            const seatData = playwrightMock.onGetAvailableSeatInSeatMap();
-
-            const availableSeatData = seatData.filter((s) => s.status === 'AVAILABLE');
-            if (availableSeatData.length < 1)
-                return
-            const selectedSeatData = availableSeatData[0];
-            playwrightMock.onSelecteSeatInSeatMap(selectedSeatData.colIndex, selectedSeatData.rowIndex);
-        });
-
+        //select seat avaialble
+        await selectSeatAvailable(page);
 
         // Step 5: Press Checkout Button
         const checkoutButton = page.getByRole('button', { name: 'CHECK OUT' });
@@ -143,28 +119,8 @@ test.describe('unlock-code', () => {
 
         await page.waitForTimeout(5000)
 
-        // Step 4.1: Find Seat Available and Select Seat
-        const seatData = await page.evaluate(() => {
-            const stage = window.Konva?.stages?.[0];
-            if (!stage) return { error: 'No stage' };
-
-            const layer = stage.getLayers()?.[0];
-            if (!layer) return { error: 'No layer' };
-
-            return layer;
-        });
-
-        await page.evaluate(() => {
-            const playwrightMock = window.Playwright;
-            const seatData = playwrightMock.onGetAvailableSeatInSeatMap();
-
-            const availableSeatData = seatData.filter((s) => s.status === 'AVAILABLE');
-            if (availableSeatData.length < 1)
-                return
-            const selectedSeatData = availableSeatData[0];
-            playwrightMock.onSelecteSeatInSeatMap(selectedSeatData.colIndex, selectedSeatData.rowIndex);
-        });
-
+        //select seat avaialble
+        await selectSeatAvailable(page);
 
         // Step 5: Press Checkout Button
         const checkoutButton = page.getByRole('button', { name: 'CHECK OUT' });
