@@ -7,7 +7,7 @@ export async function selectSeatAvailable(page: Page) {
         const seatDatas = window.Konva.stages[1].find('.seat-data')
 
         //find Available seat 
-        const seatAvailables = seatDatas.filter(node=> node.attrs?.['objData'])
+        const seatAvailables = seatDatas.filter(node=> node.attrs?.['objData'].status === "AVAILABLE")
 
         seatAvailables[0].fire('click')
     });
